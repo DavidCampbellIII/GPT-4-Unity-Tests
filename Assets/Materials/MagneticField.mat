@@ -26,10 +26,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _FieldLines: 0.18
-    - _LineSpacing: 2.86
-    - _LineWidth: 0.0935
-    - _Speed: 1.7
+    - _FieldLines: 2
+    - _LineSpacing: 1.5
+    - _LineWidth: 0.02
+    - _Speed: 0.5
     m_Colors:
-    - _Color: {r: 0, g: 0.46666667, b: 1, a: 0.95686275}
+    - _Color: {r: 0, g: 0.46666658, b: 1, a: 1}
   m_BuildTextureStacks: []
