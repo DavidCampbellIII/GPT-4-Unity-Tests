@@ -4,6 +4,8 @@ Shader "Custom/ElectromagneticFieldURP"
     {
         [MainTexture] _MainTex("Texture", 2D) = "white" {}
         [MainColor] _Color("Color", Color) = (1, 1, 1, 1)
+        _SecondaryColor("Secondary Color", Color) = (0, 1, 0, 1)
+        _ColorBlendFalloff("Color Blend Falloff", Range(0.1, 2)) = 1
         _Falloff("Falloff", Range(0, 2)) = 1
         _Intensity("Intensity", Range(0, 10)) = 1
         _Speed("Speed", Range(-5, 5)) = 1
@@ -40,6 +42,8 @@ Shader "Custom/ElectromagneticFieldURP"
         TEXTURE2D(_MainTex);
         SAMPLER(sampler_MainTex);
         float4 _Color;
+        float4 _SecondaryColor;
+        float _ColorBlendFalloff;
         float _Falloff;
         float _Intensity;
         float _Speed;
@@ -77,7 +81,9 @@ Shader "Custom/ElectromagneticFieldURP"
             float3 viewDirection = normalize(_WorldSpaceCameraPos - IN.vertex.xyz) + 0.0001;
             float fresnel = pow(1.0 - abs(dot(normalize(IN.normalWS), viewDirection)), _FresnelPower);
             fieldStrength *= fresnel;
-            half4 col = _Color * fieldStrength;
+
+            float colorLerp = smoothstep(0.5 - (_ColorBlendFalloff / 2), 0.5 + (_ColorBlendFalloff / 2), distanceFromCenter);
+            half4 col = lerp(_Color, _SecondaryColor, colorLerp) * fieldStrength;
 
             col.a *= alpha;
             return col;
