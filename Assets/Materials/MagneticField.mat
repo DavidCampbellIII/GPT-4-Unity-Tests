@@ -26,10 +26,16 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Falloff: 1.933
     - _FieldLines: 2
+    - _FresnelPower: 0.55
+    - _Intensity: 7.57
     - _LineSpacing: 1.5
     - _LineWidth: 0.02
-    - _Speed: 0.5
+    - _NoiseScale: 3.45
+    - _NumWaves: 2.64
+    - _Speed: 2.45
+    - _WaveSharpness: 8.98
     m_Colors:
-    - _Color: {r: 0, g: 0.46666658, b: 1, a: 1}
+    - _Color: {r: 0.19999996, g: 0.8, b: 1, a: 1}
   m_BuildTextureStacks: []
