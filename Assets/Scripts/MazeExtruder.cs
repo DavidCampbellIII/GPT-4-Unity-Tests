@@ -10,18 +10,36 @@ public class MazeExtruder : MonoBehaviour
     {
         Mesh mesh = new Mesh();
 
+        Vector3 direction = (end - start).normalized;
+        Vector3 normal = Vector3.Cross(Vector3.up, direction);
+        Vector3 offset = normal * wallThickness * 0.5f;
+
         Vector3[] vertices = new Vector3[]
         {
-            new Vector3(start.x, 0, start.z),
-            new Vector3(start.x, wallHeight, start.z),
-            new Vector3(end.x, wallHeight, end.z),
-            new Vector3(end.x, 0, end.z)
+            start - offset,
+            start + offset,
+            start + offset + new Vector3(0, wallHeight, 0),
+            start - offset + new Vector3(0, wallHeight, 0),
+            end - offset,
+            end + offset,
+            end + offset + new Vector3(0, wallHeight, 0),
+            end - offset + new Vector3(0, wallHeight, 0)
         };
 
         int[] triangles = new int[]
         {
-            0, 1, 2,
-            0, 2, 3
+            0, 2, 1,
+            0, 3, 2,
+            4, 5, 6,
+            4, 6, 7,
+            0, 5, 4,
+            0, 1, 5,
+            3, 7, 2,
+            3, 6, 7,
+            1, 2, 6,
+            1, 6, 5,
+            0, 7, 3,
+            0, 4, 7
         };
 
         mesh.vertices = vertices;
@@ -39,6 +57,83 @@ public class MazeExtruder : MonoBehaviour
 
         List<WallStripInfo> wallStrips = new List<WallStripInfo>();
 
+       // //Create horizontal wall strips
+       // for (int x = 0; x < width; x++)
+       // {
+       //     for (int y = 0; y < height; y++)
+       //     {
+       //         if (maze[x, y] && !visited[x, y])
+       //         {
+       //             Check horizontal wall strip
+       //             int horizontalLength = 1;
+       //             while (x + horizontalLength < width && maze[x + horizontalLength, y] && !visited[x + horizontalLength, y])
+       //             {
+       //                 horizontalLength++;
+       //             }
+
+       //             if (horizontalLength > 1)
+       //             {
+       //                 Vector2Int start = new Vector2Int(x, y);
+       //                 Vector2Int end = new Vector2Int(x + horizontalLength, y);
+       //                 float worldLength = horizontalLength * wallThickness;
+       //                 Vector3 worldStart = new Vector3((start.x * wallThickness) - (wallThickness * 0.5f), 0, start.y * wallThickness);
+       //                 Vector3 worldEnd = new Vector3((end.x * wallThickness) - (wallThickness * 0.5f), 0, end.y * wallThickness);
+       //                 Mesh stripMesh = CreateWallStripMesh(worldStart, worldEnd);
+       //                 WallStripInfo stripInfo = new WallStripInfo(start, end, horizontalLength, worldLength, stripMesh);
+       //                 wallStrips.Add(stripInfo);
+       //                 Mark visited cells(horizontal)
+       //                 for (int i = 0; i < horizontalLength; i++)
+       //                 {
+       //                     visited[x + i, y] = true;
+       //                 }
+       //             }
+       //         }
+       //     }
+       // }
+
+       // //Reset visited array
+       //visited = new bool[width, height];
+
+       // //Create vertical wall strips
+       // for (int x = 0; x < width; x++)
+       // {
+       //     for (int y = 0; y < height; y++)
+       //     {
+       //         if (maze[x, y] && !visited[x, y])
+       //         {
+       //             Check vertical wall strip
+       //             int verticalLength = 1;
+       //             while (y + verticalLength < height && maze[x, y + verticalLength] && !visited[x, y + verticalLength])
+       //             {
+       //                 Check if the current cell is already part of a horizontal wall strip
+       //                 if (x > 0 && maze[x - 1, y + verticalLength])
+       //                 {
+       //                     break;
+       //                 }
+       //                 verticalLength++;
+       //             }
+
+       //             if (verticalLength > 1)
+       //             {
+       //                 Vector2Int start = new Vector2Int(x, y);
+       //                 Vector2Int end = new Vector2Int(x, y + verticalLength);
+       //                 float worldLength = verticalLength * wallThickness;
+       //                 Vector3 worldStart = new Vector3(start.x * wallThickness, 0, (start.y * wallThickness) - (wallThickness * 0.5f));
+       //                 Vector3 worldEnd = new Vector3(end.x * wallThickness, 0, (end.y * wallThickness) - (wallThickness * 0.5f));
+       //                 Mesh stripMesh = CreateWallStripMesh(worldStart, worldEnd);
+       //                 WallStripInfo stripInfo = new WallStripInfo(start, end, verticalLength, worldLength, stripMesh);
+       //                 wallStrips.Add(stripInfo);
+       //                 Mark visited cells(vertical)
+       //                 for (int i = 0; i < verticalLength; i++)
+       //                 {
+       //                     visited[x, y + i] = true;
+       //                 }
+       //             }
+       //         }
+       //     }
+       // }
+       // return wallStrips;
+
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -52,6 +147,24 @@ public class MazeExtruder : MonoBehaviour
                         horizontalLength++;
                     }
 
+                    if (horizontalLength > 1)
+                    {
+                        Vector2Int start = new Vector2Int(x, y);
+                        Vector2Int end = new Vector2Int(x + horizontalLength, y);
+                        float worldLength = horizontalLength * wallThickness;
+                        Vector3 worldStart = new Vector3((start.x * wallThickness) - (wallThickness * 0.5f), 0, start.y * wallThickness);
+                        Vector3 worldEnd = new Vector3((end.x * wallThickness) - (wallThickness * 0.5f), 0, end.y * wallThickness);
+                        Mesh stripMesh = CreateWallStripMesh(worldStart, worldEnd);
+                        WallStripInfo stripInfo = new WallStripInfo(start, end, horizontalLength, worldLength, stripMesh);
+                        wallStrips.Add(stripInfo);
+
+                        // Mark visited cells
+                        for (int i = 0; i < horizontalLength; i++)
+                        {
+                            visited[x + i, y] = true;
+                        }
+                    }
+
                     // Check vertical wall strip
                     int verticalLength = 1;
                     while (y + verticalLength < height && maze[x, y + verticalLength] && !visited[x, y + verticalLength])
@@ -59,38 +172,19 @@ public class MazeExtruder : MonoBehaviour
                         verticalLength++;
                     }
 
-                    int stripLength;
-                    bool horizontal;
-
-                    // Choose longer strip
-                    if (horizontalLength > verticalLength)
+                    if (verticalLength > 1)
                     {
-                        horizontal = true;
-                        stripLength = horizontalLength;
-                    }
-                    else
-                    {
-                        horizontal = false;
-                        stripLength = verticalLength;
-                    }
+                        Vector2Int start = new Vector2Int(x, y);
+                        Vector2Int end = new Vector2Int(x, y + verticalLength);
+                        float worldLength = verticalLength * wallThickness;
+                        Vector3 worldStart = new Vector3(start.x * wallThickness, 0, (start.y * wallThickness) - (wallThickness * 0.5f));
+                        Vector3 worldEnd = new Vector3(end.x * wallThickness, 0, (end.y * wallThickness) - (wallThickness * 0.5f));
+                        Mesh stripMesh = CreateWallStripMesh(worldStart, worldEnd);
+                        WallStripInfo stripInfo = new WallStripInfo(start, end, verticalLength, worldLength, stripMesh);
+                        wallStrips.Add(stripInfo);
 
-                    Vector2Int start = new Vector2Int(x, y);
-                    Vector2Int end = horizontal ? new Vector2Int(x + stripLength - 1, y) : new Vector2Int(x, y + stripLength - 1);
-                    float worldLength = stripLength * wallThickness;
-                    Vector3 worldStart = new Vector3(start.x * wallThickness, 0, start.y * wallThickness);
-                    Vector3 worldEnd = new Vector3(end.x * wallThickness, 0, end.y * wallThickness);
-                    Mesh stripMesh = CreateWallStripMesh(worldStart, worldEnd);
-                    WallStripInfo stripInfo = new WallStripInfo(start, end, stripLength, worldLength, stripMesh);
-                    wallStrips.Add(stripInfo);
-
-                    // Mark visited cells
-                    for (int i = 0; i < stripLength; i++)
-                    {
-                        if (horizontal)
-                        {
-                            visited[x + i, y] = true;
-                        }
-                        else
+                        // Mark visited cells
+                        for (int i = 0; i < verticalLength; i++)
                         {
                             visited[x, y + i] = true;
                         }

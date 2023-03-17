@@ -12,13 +12,44 @@ public class MazeBuilder : MonoBehaviour
 
     private void Start()
     {
-        bool[,] grid =
+        bool[,] grid1 =
         {
-            {false, true, false},
+            {false, false, false},
             {true, true, true},
-            {false, true, false},
+            {false, false, false},
+            {true, true, true},
+            {false, false, false},
+            {true, true, true},
+            {false, false, false},
         };
 
+        bool[,] grid2 =
+        {
+            {true, true, true},
+            {false, true, false},
+            {false, true, false},
+            {true, true, true},
+            {false, false, false},
+            {true, true, true},
+        };
+
+        bool[,] grid3 =
+        {
+            {true, true, true},
+            {true, false, true},
+            {true, false, true},
+            {true, false, true},
+            {true, false, true},
+            {true, true, true},
+        };
+
+        //CreateMesh(grid1);
+        //CreateMesh(grid2);
+        CreateMesh(grid3);
+    }
+
+    private void CreateMesh(bool[,] grid)
+    {
         MazeExtruder extruder = GetComponent<MazeExtruder>();
         strips = extruder.ExtrudeMaze(grid);
 
