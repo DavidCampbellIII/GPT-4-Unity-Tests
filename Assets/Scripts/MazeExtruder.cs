@@ -63,9 +63,24 @@ public class MazeExtruder : MonoBehaviour
             normals[i] = normals[i].normalized;
         }
 
+        // Calculate the UV coordinates
+        float wallLength = Vector3.Distance(start, end);
+        Vector2[] uvs = new Vector2[]
+        {
+            new Vector2(0, 0),
+            new Vector2(0, wallThickness),
+            new Vector2(0, wallThickness + wallHeight),
+            new Vector2(0, wallHeight),
+            new Vector2(wallLength, 0),
+            new Vector2(wallLength, wallThickness),
+            new Vector2(wallLength, wallThickness + wallHeight),
+            new Vector2(wallLength, wallHeight)
+        };
+
         mesh.vertices = vertices;
         mesh.triangles = triangles;
         mesh.normals = normals;
+        mesh.uv = uvs;
         mesh.RecalculateUVDistributionMetrics();
 
         return mesh;
@@ -170,7 +185,7 @@ public class MazeExtruder : MonoBehaviour
                         horizontalLength++;
                     }
 
-                    if (horizontalLength >= 1)
+                    if (horizontalLength > 1)
                     {
                         Vector2Int start = new Vector2Int(x, y);
                         Vector2Int end = new Vector2Int(x + horizontalLength, y);
@@ -195,7 +210,7 @@ public class MazeExtruder : MonoBehaviour
                         verticalLength++;
                     }
 
-                    if (verticalLength >= 1)
+                    if (verticalLength > 1)
                     {
                         Vector2Int start = new Vector2Int(x, y);
                         Vector2Int end = new Vector2Int(x, y + verticalLength);
