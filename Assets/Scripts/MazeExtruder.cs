@@ -32,22 +32,45 @@ public class MazeExtruder : MonoBehaviour
             0, 3, 2,
             4, 5, 6,
             4, 6, 7,
-            0, 5, 4,
-            0, 1, 5,
-            3, 7, 2,
-            3, 6, 7,
-            1, 2, 6,
-            1, 6, 5,
+            0, 4, 7,
             0, 7, 3,
-            0, 4, 7
+            1, 0, 4,
+            1, 4, 5,
+            3, 6, 2,
+            3, 7, 6,
+            2, 5, 1,
+            2, 6, 5
         };
+
+        // Manually calculate normals
+        Vector3[] normals = new Vector3[vertices.Length];
+
+        for (int i = 0; i < triangles.Length; i += 3)
+        {
+            Vector3 a = vertices[triangles[i]];
+            Vector3 b = vertices[triangles[i + 1]];
+            Vector3 c = vertices[triangles[i + 2]];
+
+            Vector3 faceNormal = Vector3.Cross(b - a, c - a).normalized;
+
+            normals[triangles[i]] += faceNormal;
+            normals[triangles[i + 1]] += faceNormal;
+            normals[triangles[i + 2]] += faceNormal;
+        }
+
+        for (int i = 0; i < normals.Length; i++)
+        {
+            normals[i] = normals[i].normalized;
+        }
 
         mesh.vertices = vertices;
         mesh.triangles = triangles;
-        mesh.RecalculateNormals();
+        mesh.normals = normals;
+        mesh.RecalculateUVDistributionMetrics();
 
         return mesh;
     }
+
 
     public List<WallStripInfo> ExtrudeMaze(bool[,] maze)
     {
@@ -147,7 +170,7 @@ public class MazeExtruder : MonoBehaviour
                         horizontalLength++;
                     }
 
-                    if (horizontalLength > 1)
+                    if (horizontalLength >= 1)
                     {
                         Vector2Int start = new Vector2Int(x, y);
                         Vector2Int end = new Vector2Int(x + horizontalLength, y);
@@ -166,13 +189,13 @@ public class MazeExtruder : MonoBehaviour
                     }
 
                     // Check vertical wall strip
-                    int verticalLength = 1;
+                    int verticalLength = 0;
                     while (y + verticalLength < height && maze[x, y + verticalLength] && !visited[x, y + verticalLength])
                     {
                         verticalLength++;
                     }
 
-                    if (verticalLength > 1)
+                    if (verticalLength >= 1)
                     {
                         Vector2Int start = new Vector2Int(x, y);
                         Vector2Int end = new Vector2Int(x, y + verticalLength);

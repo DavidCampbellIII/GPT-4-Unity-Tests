@@ -41,6 +41,20 @@ public class MazeBuilder : MonoBehaviour
             {true, false, true},
             {true, false, true},
             {true, true, true},
+
+            {true, true, true},
+            {true, false, true},
+            {true, false, true},
+            {true, false, true},
+            {true, false, true},
+            {true, true, true},
+
+            {true, true, true},
+            {true, false, true},
+            {true, false, true},
+            {true, false, true},
+            {true, false, true},
+            {true, true, true},
         };
 
         //CreateMesh(grid1);
