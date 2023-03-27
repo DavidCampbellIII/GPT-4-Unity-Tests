@@ -5,6 +5,7 @@ public class MazeExtruder : MonoBehaviour
 {
     public float wallHeight = 3f;
     public float wallThickness = 1f;
+    public int maxStripLength = 25;
 
     private Mesh CreateWallStripMesh(Vector3 start, Vector3 end)
     {
@@ -102,7 +103,7 @@ public class MazeExtruder : MonoBehaviour
                 {
                     // Check horizontal wall strip
                     int horizontalLength = 1;
-                    while (x + horizontalLength < width && maze[x + horizontalLength, y] && !visited[x + horizontalLength, y])
+                    while (x + horizontalLength < width && maze[x + horizontalLength, y] && !visited[x + horizontalLength, y] && horizontalLength < maxStripLength)
                     {
                         horizontalLength++;
                     }
@@ -127,7 +128,7 @@ public class MazeExtruder : MonoBehaviour
 
                     // Check vertical wall strip
                     int verticalLength = 0;
-                    while (y + verticalLength < height && maze[x, y + verticalLength] && !visited[x, y + verticalLength])
+                    while (y + verticalLength < height && maze[x, y + verticalLength] && !visited[x, y + verticalLength] && verticalLength < maxStripLength)
                     {
                         verticalLength++;
                     }
